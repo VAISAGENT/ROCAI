@@ -1,40 +1,63 @@
-import os
 import anthropic
+from datetime import datetime
 
-# CONFIGURATION - set ANTHROPIC_API_KEY env var or paste key below
-API_KEY = os.getenv("ANTHROPIC_API_KEY", "sk-ant-api03-YOUR_NEW_KEY_HERE")
-
-client = anthropic.Anthropic(api_key=API_KEY)
+# API key is read from the ANTHROPIC_API_KEY environment variable automatically
+client = anthropic.Anthropic()
 
 
-def generate_awake_audit_report() -> str:
-    """Uses Claude to generate a detailed Awake Stores audit report as JSON."""
+def generate_awake_audit() -> str:
+    """Generates comprehensive Awake Stores audit using Claude API."""
 
     audit_prompt = """
-    You are a digital business strategist analyzing Awake Stores (cannabis dispensary, Brooklyn & Fort Lauderdale).
+    You are a digital business strategist analyzing Awake Stores (cannabis dispensary with locations in Brooklyn Park Slope & Fort Lauderdale).
 
-    Based on their current state:
-    - Instagram: 64 followers on main account, 999 on secondary (@awakecanna) - split audience
-    - Website: awakestores.com - clean design but no visitor tracking, manual chat only
-    - Operating hours: 12 PM - 8 PM (closed 8 PM - 12 PM)
+    Current state:
+    - Instagram: Main @awakestores (64 followers, 362 posts) + secondary @awakecanna (999 followers, 127 posts) = split audience
+    - Website: awakestores.com - clean design but critical gaps in conversion
+    - Operating hours: 12 PM - 8 PM daily (closed 8 PM - 12 PM = losing customers)
     - Products: Edibles, Drinks, Topicals, Concentrates, Flower, Vapes, Accessories
-    - Locations: Brooklyn (Park Slope) & Fort Lauderdale
-    - Current gaps: No 24/7 customer service, no voice AI, no automated social posting, no lead capture
+    - Two locations: Brooklyn (204 Garfield Pl, Park Slope) & Fort Lauderdale
+    - Current customer service: Manual chat only (hours-dependent), no voice AI, no 24/7 support
 
-    Generate a detailed audit report with:
-    1. Executive Summary (overall score, key findings)
-    2. Critical gaps (list 5-7 major conversion blockers)
-    3. Revenue impact calculation (estimated lost monthly revenue)
-    4. Immediate solutions (30-day roadmap)
-    5. Pricing proposal (setup fee + monthly retainer)
-    6. Next steps
+    Generate a strategic audit report in clear sections:
 
-    Format as JSON for easy parsing.
+    1. EXECUTIVE SUMMARY
+       - Overall digital maturity score (1-10)
+       - Top 3 strengths
+       - Top 3 critical gaps
+
+    2. SOCIAL MEDIA ANALYSIS
+       - Current performance metrics
+       - Engagement rate assessment
+       - Specific gaps (posting frequency, content strategy, platform utilization)
+       - TikTok opportunity assessment
+
+    3. WEBSITE & CONVERSION GAPS
+       - List 5 critical conversion blockers
+       - Revenue impact of each gap
+       - Visitor journey breakdown
+
+    4. AFTER-HOURS REVENUE LOSS
+       - Estimated monthly lost revenue (be specific with calculation)
+       - Customer inquiries happening at 8 PM - 12 PM that go unanswered
+
+    5. PROPOSED SOLUTIONS (30-60-90 day roadmap)
+       - Immediate wins (first 30 days)
+       - Medium-term builds (30-60 days)
+       - Ongoing optimization
+
+    6. PRICING PROPOSAL
+       - Setup fee recommendation
+       - Monthly retainer recommendation
+       - What's included in retainer
+       - Optional add-ons
+
+    Make it compelling but grounded in their actual situation. Sound like a peer strategist, not a vendor.
     """
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=2000,
+        max_tokens=3000,
         messages=[{"role": "user", "content": audit_prompt}],
     )
 
@@ -42,27 +65,26 @@ def generate_awake_audit_report() -> str:
 
 
 def generate_outreach_email() -> str:
-    """Uses Claude to generate a personalized outreach email for Awake Stores."""
+    """Generates personalized outreach email for Awake Stores leadership."""
 
     email_prompt = """
-    Write a concise outreach email to the owner/partners of Awake Stores (cannabis dispensary in Brooklyn & Fort Lauderdale).
+    Write a short, direct outreach email to the owners/partners of Awake Stores.
 
-    Email should:
-    - Acknowledge their strong brand and product
-    - Identify the specific problem: losing customers outside 12 PM - 8 PM when closed
-    - Quantify cost: estimate they're losing $3-5K/month in after-hours orders
-    - Position solution: 24/7 AI agents, automated social posting, visitor tracking
-    - Sound like a peer/strategist, NOT a salesperson
-    - Include a soft CTA (discovery call)
-    - Keep it under 150 words
-
-    Send to: parkslope@awakestores.com
-    From: Kyle Strand (Operations Specialist)
+    Requirements:
+    - Acknowledge their strong brand and product quality
+    - Lead with the specific problem: losing customers outside business hours (8 PM - 12 PM)
+    - Quantify impact: estimate $3,500 - $5,800 lost per month in after-hours orders
+    - Position the solution: 24/7 voice AI, automated social posting, visitor tracking, lead capture
+    - Sound like Kyle Strand (operations strategist), not a salesman
+    - No corporate jargon - direct and honest
+    - Include soft CTA: "Let's talk for 15 minutes about what this could mean for your November revenue"
+    - Keep under 200 words
+    - Format: Email to parkslope@awakestores.com
     """
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=500,
+        max_tokens=600,
         messages=[{"role": "user", "content": email_prompt}],
     )
 
@@ -70,19 +92,21 @@ def generate_outreach_email() -> str:
 
 
 if __name__ == "__main__":
-    print("=" * 80)
-    print("AWAKE STORES - AUDIT & OUTREACH GENERATION")
-    print("=" * 80)
+    print("=" * 90)
+    print("AWAKE STORES - DIGITAL AUDIT & OUTREACH PACKAGE")
+    print("Generated: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print("=" * 90)
 
-    print("\n[1/2] Generating audit report...\n")
-    audit = generate_awake_audit_report()
-    print(audit)
+    print("\n[GENERATING AUDIT REPORT...]\n")
+    audit_report = generate_awake_audit()
+    print(audit_report)
 
-    print("\n" + "=" * 80)
-    print("\n[2/2] Generating outreach email...\n")
-    email = generate_outreach_email()
-    print(email)
+    print("\n" + "=" * 90)
+    print("\n[GENERATING OUTREACH EMAIL...]\n")
+    outreach_email = generate_outreach_email()
+    print(outreach_email)
 
-    print("\n" + "=" * 80)
-    print("COMPLETE - Ready to send to Awake Stores")
-    print("=" * 80)
+    print("\n" + "=" * 90)
+    print("\nAWAKE PACKAGE COMPLETE")
+    print("Next: Review above, send email to parkslope@awakestores.com")
+    print("=" * 90)
